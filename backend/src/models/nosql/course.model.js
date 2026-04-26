@@ -1,101 +1,102 @@
-import { Schema, model } from "mongoose";
-
-const lectureSchema = new Schema(
+// models/course.model.js
+import mongoose from "mongoose";
+import slugify from "slugify";
+const courseSchema = new mongoose.Schema(
   {
     title: {
       type: String,
-      required: true,
+      required: [true, "Course title is required"],
       trim: true,
+      maxlength: 120,
+    },
+
+    slug: {
+      type: String,
+      unique: true,
+      lowercase: true,
+    },
+
+    subtitle: {
+      type: String,
+      trim: true,
+      maxlength: 180,
+      default: "",
     },
 
     description: {
       type: String,
-      trim: true,
-    },
-
-    video: {
-      public_id: {
-        type: String,
-        required: true,
-      },
-      secure_url: {
-        type: String,
-        required: true,
-      },
-    },
-
-    duration: {
-      type: Number,
-      required: true,
-      min: 1,
-    },
-
-    isPreview: {
-      type: Boolean,
-      default: false,
-    },
-
-    order: {
-      type: Number,
-    },
-  },
-  { timestamps: true },
-);
-
-const sectionSchema = new Schema(
-  {
-    title: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-
-    order: {
-      type: Number,
-    },
-
-    lectures: [lectureSchema],
-  },
-  { timestamps: true },
-);
-
-const courseSchema = new Schema(
-  {
-    title: {
-      type: String,
-      required: [true, "title is required"],
-      minLength: 8,
-      maxLength: 60,
-      trim: true,
-      index: true,
-    },
-
-    description: {
-      type: String,
-      required: true,
-      minLength: 8,
-      maxLength: 200,
-      trim: true,
+      required: [true, "Description is required"],
     },
 
     category: {
       type: String,
       required: true,
-      index: true,
+      trim: true,
+    },
+
+    level: {
+      type: String,
+      enum: ["beginner", "intermediate", "advanced"],
+      default: "beginner",
+    },
+
+    language: {
+      type: String,
+      default: "English",
     },
 
     thumbnail: {
-      public_id: {
-        type: String,
-        required: true,
-      },
-      secure_url: {
-        type: String,
-        required: true,
-      },
+      url: String,
+      public_id: String,
     },
 
-    sections: [sectionSchema],
+    promoVideo: {
+      url: String,
+      public_id: String,
+    },
+
+    price: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
+    discountPrice: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
+    isFree: {
+      type: Boolean,
+      default: false,
+    },
+
+    status: {
+      type: String,
+      enum: ["draft", "published", "unpublished"],
+      default: "draft",
+    },
+
+    instructor: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+
+    sections: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Section",
+      },
+    ],
+
+    enrolledStudents: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
 
     totalLectures: {
       type: Number,
@@ -103,87 +104,138 @@ const courseSchema = new Schema(
     },
 
     totalDuration: {
+      type: Number, // minutes
+      default: 0,
+    },
+
+    rating: {
       type: Number,
       default: 0,
     },
 
-    createdBy: {
-      // type: Schema.Types.ObjectId,
-      type: String,
-      // ref: "User",
-      required: true,
-      index: true,
+    totalReviews: {
+      type: Number,
+      default: 0,
     },
 
-    isPublished: {
-      type: Boolean,
-      default: false,
-    },
+    tags: [String],
+
+    requirements: [String],
+
+    learningOutcomes: [String],
 
     isDeleted: {
       type: Boolean,
       default: false,
     },
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+  },
 );
 
-// ---
-
-// # 🔥 CRITICAL FIX: AUTO CALCULATION (MOST IMPORTANT)
-
-courseSchema.pre("save", function () {
-  let totalLectures = 0;
-  let totalDuration = 0;
-
-  this.sections.forEach((section) => {
-    totalLectures += section.lectures.length;
-
-    section.lectures.forEach((lec, index) => {
-      // auto order fix
-      if (lec.order === undefined) {
-        lec.order = index + 1;
-      }
-
-      totalDuration += lec.duration || 0;
-    });
-
-    // section order fix
-    if (section.order === undefined) {
-      section.order = this.sections.indexOf(section) + 1;
-    }
-  });
-
-  this.totalLectures = totalLectures;
-  this.totalDuration = totalDuration;
-
-  // next();
+/* Auto Slug */
+courseSchema.pre("save", function (next) {
+  if (this.isModified("title")) {
+    this.slug = slugify(this.title, { lower: true, strict: true });
+  }
+  next();
 });
 
-const courseModel = model("Course", courseSchema);
+/* Indexing */
+courseSchema.index({ title: "text", description: "text" });
+courseSchema.index({ instructor: 1 });
+
+const courseModel = mongoose.model("Course", courseSchema);
 
 export default courseModel;
+
+// import { Schema, model } from "mongoose";
+
+// const lectureSchema = new Schema(
+//   {
+//     title: {
+//       type: String,
+//       required: true,
+//       trim: true,
+//     },
+
+//     description: {
+//       type: String,
+//       trim: true,
+//     },
+
+//     video: {
+//       public_id: {
+//         type: String,
+//         required: true,
+//       },
+//       secure_url: {
+//         type: String,
+//         required: true,
+//       },
+//     },
+
+//     duration: {
+//       type: Number,
+//       required: true,
+//       min: 1,
+//     },
+
+//     isPreview: {
+//       type: Boolean,
+//       trim: true,
+//       default: false,
+//     },
+
+//     order: {
+//       type: Number,
+//     },
+//   },
+//   { timestamps: true },
+// );
+
+// const sectionSchema = new Schema(
+//   {
+//     title: {
+//       type: String,
+//       required: true,
+//       trim: true,
+//     },
+
+//     order: {
+//       type: Number,
+//     },
+
+//     lectures: [lectureSchema],
+//   },
+//   { timestamps: true },
+// );
 
 // const courseSchema = new Schema(
 //   {
 //     title: {
 //       type: String,
-//       required: [true, "title is required"],
-//       minLength: [8, "title must be atleast 8 characters"],
-//       maxLength: [60, "title should be less than 60 characters"],
+//       required: [true, "Title is required"],
+//       minlength: 8,
+//       maxlength: 60,
 //       trim: true,
 //     },
+
 //     description: {
 //       type: String,
-//       required: [true, "description is required"],
-//       minLength: [8, "description must be atleast 8 characters"],
-//       maxLength: [200, "description should be less than 60 characters"],
+//       required: true,
+//       minlength: 8,
+//       maxlength: 200,
 //       trim: true,
 //     },
+
 //     category: {
 //       type: String,
-//       required: [true, "category is required"],
+//       required: true,
+//       trim: true,
 //     },
+
 //     thumbnail: {
 //       public_id: {
 //         type: String,
@@ -194,30 +246,79 @@ export default courseModel;
 //         required: true,
 //       },
 //     },
-//     lectures: [
-//       {
-//         title: String,
-//         description: String,
-//         lecture: {
-//           public_id: {
-//             type: String,
-//             required: true,
-//           },
-//           secure_url: {
-//             type: String,
-//             required: true,
-//           },
-//         },
-//       },
-//     ],
-//     numbersOfLectures: {
+
+//     sections: [sectionSchema],
+
+//     totalLectures: {
 //       type: Number,
 //       default: 0,
 //     },
+
+//     totalDuration: {
+//       type: Number,
+//       default: 0,
+//     },
+
 //     createdBy: {
 //       type: String,
-//       required: [true],
+//       required: true,
+//       trim: true,
+//     },
+
+//     isPublished: {
+//       type: Boolean,
+//       trim: true,
+//       default: false,
+//     },
+
+//     isDeleted: {
+//       type: Boolean,
+//       default: false,
 //     },
 //   },
 //   { timestamps: true },
 // );
+
+// // Search by title
+// courseSchema.index({ title: 1 });
+
+// // Browse published courses by category
+// courseSchema.index({ category: 1, isPublished: 1 });
+
+// // Instructor dashboard
+// courseSchema.index({ createdBy: 1, isDeleted: 1 });
+
+// // Latest courses
+// courseSchema.index({ createdAt: -1 });
+
+// courseSchema.pre("save", function (next) {
+//   let totalLectures = 0;
+//   let totalDuration = 0;
+
+//   this.sections.forEach((section, secIndex) => {
+//     // section order auto fix
+//     if (section.order === undefined || section.order === null) {
+//       section.order = secIndex + 1;
+//     }
+
+//     totalLectures += section.lectures.length;
+
+//     section.lectures.forEach((lecture, lecIndex) => {
+//       // lecture order auto fix
+//       if (lecture.order === undefined || lecture.order === null) {
+//         lecture.order = lecIndex + 1;
+//       }
+
+//       totalDuration += lecture.duration || 0;
+//     });
+//   });
+
+//   this.totalLectures = totalLectures;
+//   this.totalDuration = totalDuration;
+
+//   next();
+// });
+
+// const courseModel = model("Course", courseSchema);
+
+// export default courseModel;

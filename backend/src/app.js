@@ -9,7 +9,15 @@ import userRoutes from "./routes/user.route.js";
 import errorMiddleware from "./middlewares/error.middleware.js";
 import courseRoutes from "./routes/course.route.js";
 import paymentRoutes from "./routes/payment.route.js";
+import orderRoutes from "./routes/order.route.js";
+import enrollmentRoutes from "./routes/enrollment.route.js";
 import contactRouter from "./routes/contact.route.js";
+import authRoutes from "./routes/auth.route.js";
+import sectionRoutes from "./routes/section.route.js";
+import lectureRoutes from './routes/lecture.route.js';
+import progressRoutes from './routes/progress.route.js';
+import reviewRoutes from './routes/review.route.js';
+import adminRoutes from './routes/admin.route.js';
 
 const app = express();
 
@@ -43,10 +51,18 @@ app.use(
 );
 
 app.use("/uploads", express.static("uploads"));
+app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/course", courseRoutes);
+app.use("/api/v1/section", sectionRoutes);
+app.use("/api/v1/lecture", lectureRoutes);
 app.use("/api/v1/payment", paymentRoutes);
-app.use("/api/v1", contactRouter);
+app.use("/api/v1/order", orderRoutes);
+app.use("/api/v1/enrollment", enrollmentRoutes);
+app.use("/api/v1/progress", progressRoutes);
+app.use("/api/v1/review", reviewRoutes);
+app.use("/api/v1/contact", contactRouter);
+app.use("/api/v1/admin", adminRoutes);
 
 app.use((req, res) => {
   logger.warn(`404 - ${req.method} ${req.originalUrl}`);

@@ -1,34 +1,134 @@
+// src/repositories/userModel.repository.js
+
 import userModel from "../models/nosql/user.model.js";
 
-const createUser = (data) => {
-  return userModel.create(data);
+/**
+ * Find userModel By Id
+ */
+export const findUserByIdRepo = async (userId, selectPassword = false) => {
+  let query = userModel.findById(userId);
+
+  if (selectPassword) {
+    query = query.select("+password");
+  }
+
+  return await query;
 };
 
-const findById = (id) => {
-  return userModel.findById(id);
+/**
+ * Find userModel By Email
+ */
+export const findUserByEmailRepo = async (email, selectPassword = false) => {
+  let query = userModel.findOne({
+    email,
+  });
+
+  if (selectPassword) {
+    query = query.select("+password");
+  }
+
+  return await query;
 };
 
-const findByEmail = (email) => {
-  return userModel.findOne({ email });
+/**
+ * Update userModel By Id
+ */
+export const updateUserByIdRepo = async (userId, payload) => {
+  return await userModel.findByIdAndUpdate(userId, payload, {
+    new: true,
+    runValidators: true,
+  });
 };
 
-const findByEmailWithPassword = (email) => {
-  return userModel.findOne({ email }).select("+password");
+/**
+ * Delete userModel By Id
+ */
+export const deleteUserByIdRepo = async (userId) => {
+  return await userModel.findByIdAndDelete(userId);
 };
 
-const saveUser = (user) => {
-  return user.save()
-}
+/**
+ * Get userModel Dashboard Data
+ */
+export const getUserDashboardRepo = async (userId) => {
+  return await userModel
+    .findById(userId)
+    .select("name email role avatar createdAt");
+};
 
-const editProfileById = async (userId, payload) => {
-  return await User.findByIdAndUpdate(
+/**
+ * Count Users
+ */
+export const countUsersRepo = async () => {
+  return await userModel.countDocuments();
+};
+
+/**
+ * Find All Users
+ */
+export const findAllUsersRepo = async (filter = {}, options = {}) => {
+  const {
+    skip = 0,
+    limit = 10,
+    sort = {
+      createdAt: -1,
+    },
+  } = options;
+
+  return await userModel.find(filter).skip(skip).limit(limit).sort(sort);
+};
+
+/**
+ * Remove Refresh Token
+ */
+export const removeRefreshTokenRepo = async (userId) => {
+  return await useModel.findByIdAndUpdate(
     userId,
-    payload,
+    {
+      $unset: {
+        refreshToken: 1,
+      },
+    },
     {
       new: true,
-      runValidators: true,
-    }
-  ).select("-password");
+    },
+  );
 };
 
-export { createUser, findById, findByEmail, findByEmailWithPassword, saveUser, editProfileById };
+// import userModel from "../models/nosql/userModel.model.js";
+
+// const createUser = (data) => {
+//   return userModel.create(data);
+// };
+
+// const findById = (id) => {
+//   return userModel.findById(id);
+// };
+
+// const findByEmail = (email) => {
+//   return userModel.findOne({ email });
+// };
+
+// const findByEmailWithPassword = (email) => {
+//   return userModel.findOne({ email }).select("+password");
+// };
+
+// const saveUser = (userModel) => {
+//   return userModel.save();
+// };
+
+// const updateUserById = (id, data) => {
+//   return userModel.findByIdAndUpdate(id, data, {
+//     new: true,
+//     runValidators: true,
+//   }).select("-password");
+// };
+
+// export {
+//   createUser,
+//   findById,
+//   findByEmail,
+//   findByEmailWithPassword,
+//   saveUser,
+//   updateUserById,
+// };

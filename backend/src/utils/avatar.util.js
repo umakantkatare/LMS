@@ -1,10 +1,6 @@
 import imagekit from "../configs/imagekit.config.js";
 import logger from "./logger.util.js";
 
-
-// console.log("imagekit:", imagekit);
-// console.log("keys:", Object.keys(imagekit));
-
 const uploadToImageKit = async (file, folder = "/lms/students") => {
   if (!file) {
     logger.warn("No file provided for upload");
@@ -43,34 +39,6 @@ const uploadToImageKit = async (file, folder = "/lms/students") => {
   }
 };
 
-// const deleteFromImageKit = async (fileId) => {
-//   try {
-//     if (!fileId) {
-//       logger.warn("deleteFromImageKit called without fileId");
-//       return;
-//     }
-
-//     logger.info("Deleting file from ImageKit", { fileId });
-
-//     const response = await imagekit.deleteFile(fileId);
-
-//     logger.info("File deleted from ImageKit successfully", {
-//       fileId,
-//       response,
-//     });
-
-//     return response;
-//   } catch (error) {
-//     logger.error("Error deleting file from ImageKit", {
-//       message: error.message,
-//       stack: error.stack,
-//       fileId,
-//     });
-
-//     throw error; // let caller decide (blocking vs non-blocking)
-//   }
-// };
-
 const deleteFromImageKit = async (fileId) => {
   try {
     if (!fileId) {
@@ -80,12 +48,7 @@ const deleteFromImageKit = async (fileId) => {
 
     logger.info("Deleting file from ImageKit", { fileId });
 
-    const response = await new Promise((resolve, reject) => {
-      imagekit.deleteFile(fileId, (error, result) => {
-        if (error) return reject(error);
-        resolve(result);
-      });
-    });
+    const response = await imagekit.files.delete(fileId);
 
     logger.info("File deleted from ImageKit successfully", {
       fileId,
@@ -100,7 +63,7 @@ const deleteFromImageKit = async (fileId) => {
       fileId,
     });
 
-    throw error;
+    throw error; 
   }
 };
 

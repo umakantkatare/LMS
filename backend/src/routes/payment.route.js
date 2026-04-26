@@ -1,17 +1,21 @@
-import { Router } from "express";
+// routes/payment.routes.js
+
+import express from "express";
+
 import {
-  allPayments,
-  buySubscription,
-  getRazorpayApiKey,
-  verifySubscription,
+  createPaymentOrder,
+  verifyPayment,
 } from "../controllers/payment.controller.js";
-import { isLoggedIn } from "../middlewares/auth.middleware.js";
 
-const router = Router();
+import { isAuthenticated } from "../middlewares/auth.middleware.js";
 
-router.get("/key", isLoggedIn, getRazorpayApiKey);
-router.post("/buy", isLoggedIn, buySubscription);
-router.post("/verify", isLoggedIn, verifySubscription);
-router.get("/all", isLoggedIn, allPayments);
+const router = express.Router();
+
+/**
+ * Protected Routes
+ */
+router.post("/create-order", isAuthenticated, createPaymentOrder);
+
+router.post("/verify", isAuthenticated, verifyPayment);
 
 export default router;
