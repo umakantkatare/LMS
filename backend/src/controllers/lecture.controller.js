@@ -14,8 +14,12 @@ import {
  * POST /api/v1/course/:id/lecture
  */
 export const createLecture = asyncHandler(async (req, res) => {
-  const lecture = await createLectureService(req.params.id, req.body, req.user);
-
+  const lecture = await createLectureService(
+    req.params.courseId,
+    req.body,
+    req.user,
+  );
+  
   res.status(201).json({
     success: true,
     message: "Lecture created successfully",

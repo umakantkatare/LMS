@@ -2,9 +2,8 @@
 
 import { findUserByIdRepo } from "../repositories/auth.repository.js";
 import ErrorHandler from "../utils/errorHandler.util.js";
-import { verifyAccessToken } from "../utils/jwt.util.js";
+import { verifyAccessToken, verifyRefreshToken } from "../utils/jwt.util.js";
 import asyncHandler from "./asyncHandler.middleware.js";
-
 
 /**
  * Protect Middleware
@@ -13,31 +12,31 @@ import asyncHandler from "./asyncHandler.middleware.js";
 const protect = asyncHandler(async (req, res, next) => {
   let token = null;
 
-  /**
-   * Priority:
-   * 1. Authorization Header
-   * 2. Cookie
-   */
-
   if (
     req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer")
+    req.headers.authorization.startsWith("Bearer ")
   ) {
     token = req.headers.authorization.split(" ")[1];
-  } else if (req.cookies?.accessToken) {
-    token = req.cookies.accessToken;
   }
-
+console.log('access token from protect middleware:', token);
   if (!token) {
-    throw new ErrorHandler("Access denied. No token provided", 401);
+    return next(new ErrorHandler("Access denied. No token provided", 401));
   }
 
-  const decoded = verifyAccessToken(token);
+  let decoded;
+
+  try {
+    decoded = verifyAccessToken(token);
+    console.log('access verify token from protect middleware:', decoded);
+
+  } catch (err) {
+    return next(new ErrorHandler("Invalid or expired access token", 401));
+  }
 
   const user = await findUserByIdRepo(decoded.id);
 
   if (!user) {
-    throw new ErrorHandler("User not found", 404);
+    return next(new ErrorHandler("User not found", 404));
   }
 
   req.user = user;

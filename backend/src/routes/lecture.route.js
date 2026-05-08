@@ -28,6 +28,21 @@ router.get("/section/:sectionId", getLecturesBySection);
 /**
  * Protected Routes
  */
+
+router.post(
+  "/course/:courseId",
+  isAuthenticated,
+  authorizeRoles("instructor", "admin"),
+  
+  createLecture,
+);
+// router.post(
+//   "/course/:courseId/lecture",
+//   isAuthenticated,
+//   authorizeRoles("instructor", "admin"),
+//   createLecture,
+// );
+
 router.put(
   "/:id",
   isAuthenticated,

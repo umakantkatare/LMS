@@ -2,16 +2,17 @@
 
 import express from "express";
 
-import {
-  uploadImage,
-  signVideoUpload,
-  deleteFile,
-} from "../controllers/upload.controller.js";
+// import {
+//   uploadImage,
+//   signVideoUpload,
+//   deleteFile,
+// } from "../controllers/upload.controller.js";
 
 import { isAuthenticated } from "../middlewares/auth.middleware.js";
 import { authorizeRoles } from "../middlewares/role.middleware.js";
+import { upload } from "../middlewares/multer.middleware.js";
+import { deleteFile, signVideoUpload, uploadImage } from "../controllers/upload.controller.js";
 
-import { uploadImage as uploadImageMiddleware } from "../middlewares/multer.middleware.js";
 
 const router = express.Router();
 
@@ -24,7 +25,8 @@ router.use(isAuthenticated);
  * POST /api/v1/upload/image
  * student/instructor/admin
  */
-router.post("/image", uploadImageMiddleware, uploadImage);
+
+// router.post("/image", upload, uploadImage);
 
 /**
  * POST /api/v1/upload/sign-video

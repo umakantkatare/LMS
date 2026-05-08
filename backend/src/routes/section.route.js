@@ -8,6 +8,7 @@ import {
   updateSection,
   deleteSection,
   reorderSections,
+  createSection,
 } from "../controllers/section.controller.js";
 
 import { isAuthenticated } from "../middlewares/auth.middleware.js";
@@ -26,7 +27,15 @@ router.get("/course/:courseId", getSectionsByCourse);
 /**
  * Protected Routes
  */
-router.put(
+
+router.post(
+  "/course/:courseId",
+  isAuthenticated,
+  authorizeRoles("instructor", "admin"),
+  createSection,
+);
+
+router.patch(
   "/:id",
   isAuthenticated,
   authorizeRoles("instructor", "admin"),

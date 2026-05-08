@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { Menu, X, User } from "lucide-react";
 import useAuth from "@/hooks/useAuth";
 import { useDispatch } from "react-redux";
@@ -34,7 +34,7 @@ export default function Navbar() {
         {/* Left Logo */}
         <Link to="/" className="text-white leading-none">
           <h1 className="text-xl md:text-3xl font-semibold tracking-tight">
-            Sheriyans
+            Learning
           </h1>
           <p className="text-sm md:text-xl font-light text-white/90">
             Coding School
@@ -43,18 +43,20 @@ export default function Navbar() {
 
         {/* Desktop Center Nav */}
         <nav className="hidden md:flex items-center gap-2 px-3 py-3 rounded-2xl border border-orange-500/20 bg-black/55 backdrop-blur-2xl shadow-[0_8px_30px_rgba(255,115,0,0.08)]">
-          {navLinks.map((item, i) => (
-            <Link
+          {navLinks.map((item) => (
+            <NavLink
               key={item.name}
               to={item.path}
-              className={`px-6 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${
-                i === 0
-                  ? "bg-[#101010] text-white border border-white/10"
-                  : "text-zinc-300 hover:text-white hover:bg-white/5"
-              }`}
+              className={({ isActive }) =>
+                `px-6 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${
+                  isActive
+                    ? "bg-[#ff6900] text-white border border-white/10"
+                    : "text-zinc-300 hover:text-white hover:bg-white/5"
+                }`
+              }
             >
               {item.name}
-            </Link>
+            </NavLink>
           ))}
         </nav>
 
@@ -62,7 +64,7 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-4">
           {user ? (
             <Link
-              to="/profile"
+              to="/student/dashboard"
               className="w-11 h-11 rounded-full border border-white/10 bg-white/5 backdrop-blur-xl flex items-center justify-center text-white hover:bg-white/10 transition"
             >
               <User size={18} />

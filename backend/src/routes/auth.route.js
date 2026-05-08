@@ -26,7 +26,7 @@ router.post(
 router.post("/login", validate(loginSchema), login);
 router.post("/logout", protect, logout);
 router.get("/me", protect, me);
-router.patch("/change-password", protect, changePassword);
+router.patch("/change-password",protect, changePassword);
 router.post("/refresh-token", refreshToken);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password/:token", resetPassword);

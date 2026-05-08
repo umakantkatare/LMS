@@ -24,11 +24,18 @@ export const findUserByEmailRepo = async (email, withPassword = false) => {
 /**
  * Find user by id
  */
-export const findUserByIdRepo = async (userId, withPassword = false) => {
+export const findUserByIdRepo = async (
+  userId,
+  withPassword = false,
+  withRefreshToken = false,
+) => {
   let query = userModel.findById(userId).lean();
 
   if (withPassword) {
     query = query.select("+password");
+  }
+  if (withRefreshToken) {
+    query = query.select("+refreshToken");
   }
 
   return await query;
@@ -47,10 +54,14 @@ export const updateUserByIdRepo = async (userId, payload) => {
 /**
  * Save refresh token
  */
-export const saveRefreshTokenRepo = async (userId, refreshToken) => {
+export const saveRefreshTokenRepo = async (userId, hashRefreshToken) => {
   return await userModel.findByIdAndUpdate(
     userId,
-    { refreshToken },
+    {
+      $push: {
+        refreshToken: hashRefreshToken,
+      },
+    },
     { new: true },
   );
 };
@@ -58,10 +69,14 @@ export const saveRefreshTokenRepo = async (userId, refreshToken) => {
 /**
  * Remove refresh token
  */
-export const removeRefreshTokenRepo = async (userId) => {
+export const removeRefreshTokenRepo = async (userId, hashRefreshToken) => {
   return await userModel.findByIdAndUpdate(
     userId,
-    { refreshToken: null },
+    {
+      $pull: {
+        refreshToken: hashRefreshToken,
+      },
+    },
     { new: true },
   );
 };

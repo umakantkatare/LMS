@@ -11,7 +11,7 @@ import {
   deleteSectionRepo,
   reorderSectionsRepo,
 } from "../repositories/section.repository.js";
-import  ApiError  from "../utils/error.util.js";
+import ApiError from "../utils/error.util.js";
 
 /**
  * Create Section
@@ -22,9 +22,14 @@ export const createSectionService = async (courseId, payload, user) => {
   if (!course) {
     throw new ApiError("Course not found", 404);
   }
+  const instructorId = course.instructor?._id || course.instructor;
+
+  if (!instructorId && user.role !== "admin") {
+    throw new ApiError("Course instructor not assigned", 400);
+  }
 
   if (
-    course.instructor._id.toString() !== user._id.toString() &&
+    instructorId?.toString() !== user._id.toString() &&
     user.role !== "admin"
   ) {
     throw new ApiError("Unauthorized access", 403);
@@ -79,8 +84,14 @@ export const updateSectionService = async (sectionId, payload, user) => {
 
   const course = await getCourseByIdRepo(section.course);
 
+  const instructorId = course.instructor?._id || course.instructor;
+
+  if (!instructorId && user.role !== "admin") {
+    throw new ApiError("Course instructor not assigned", 400);
+  }
+
   if (
-    course.instructor._id.toString() !== user._id.toString() &&
+    instructorId?.toString() !== user._id.toString() &&
     user.role !== "admin"
   ) {
     throw new ApiError("Unauthorized access", 403);
@@ -103,8 +114,14 @@ export const deleteSectionService = async (sectionId, user) => {
 
   const course = await getCourseByIdRepo(section.course);
 
+  const instructorId = course.instructor?._id || course.instructor;
+
+  if (!instructorId && user.role !== "admin") {
+    throw new ApiError("Course instructor not assigned", 400);
+  }
+
   if (
-    course.instructor._id.toString() !== user._id.toString() &&
+    instructorId?.toString() !== user._id.toString() &&
     user.role !== "admin"
   ) {
     throw new ApiError("Unauthorized access", 403);
@@ -126,8 +143,14 @@ export const reorderSectionsService = async (courseId, items, user) => {
     throw new ApiError("Course not found", 404);
   }
 
+  const instructorId = course.instructor?._id || course.instructor;
+
+  if (!instructorId && user.role !== "admin") {
+    throw new ApiError("Course instructor not assigned", 400);
+  }
+
   if (
-    course.instructor._id.toString() !== user._id.toString() &&
+    instructorId?.toString() !== user._id.toString() &&
     user.role !== "admin"
   ) {
     throw new ApiError("Unauthorized access", 403);

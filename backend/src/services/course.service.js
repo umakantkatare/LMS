@@ -10,25 +10,69 @@ import {
   unpublishCourseRepo,
   deleteCourseRepo,
 } from "../repositories/course.repository.js";
-import  ApiError  from "../utils/error.util.js";
+import { deleteFromImageKit, uploadToImageKit } from "../utils/avatar.util.js";
+import ApiError from "../utils/error.util.js";
 
 /**
  * Create Course
  */
-export const createCourseService = async (payload, userId) => {
+export const createCourseService = async (payload, userId, file) => {
+  // Trim strings
+  Object.keys(payload).forEach((key) => {
+    if (typeof payload[key] === "string") {
+      payload[key] = payload[key].trim();
+    }
+  });
+
+  // Required fields
   if (!payload.title || !payload.description || !payload.category) {
     throw new ApiError("Title, description and category are required", 400);
   }
 
-  payload.instructor = userId;
+  // Convert number
+  payload.price = Number(payload.price || 0);
+  payload.discountPrice = Number(payload.discountPrice || 0);
 
+  // Free course logic
   if (payload.price === 0) {
     payload.isFree = true;
   }
 
-  const course = await createCourseRepo(payload);
+  payload.instructor = userId;
 
-  return course;
+  let uploadedFile = null;
+
+  try {
+    // Upload thumbnail first
+    if (file) {
+      uploadedFile = await uploadToImageKit(file, "/lms/course/thumbnail");
+
+      payload.thumbnail = {
+        public_id: uploadedFile.public_id,
+        url: uploadedFile.secure_url,
+      };
+    }
+
+    const course = await createCourseRepo(payload);
+
+    if (!course) {
+      throw new ApiError("Course could not be created, please try again", 400);
+    }
+
+    return course;
+  } catch (error) {
+    logger.error("Create Course Error", {
+      message: error.message,
+      hasFile: !!file,
+    });
+
+    // rollback uploaded file
+    if (uploadedFile?.fileId) {
+      await deleteFromImageKit(uploadedFile.fileId);
+    }
+
+    throw error;
+  }
 };
 
 /**

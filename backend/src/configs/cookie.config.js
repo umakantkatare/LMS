@@ -1,9 +1,14 @@
 const cookieOptions = {
-  maxAge: 7 * 24 * 60 * 60 * 1000, 
-  httpOnly: true,
+ httpOnly: true,
   secure: true, 
   sameSite: "strict", 
 };
+
+// const cookieOptions = {
+//   httpOnly: true,
+//   secure: process.env.NODE_ENV === "production",
+//   sameSite: "strict",
+// };
 
 export default cookieOptions;
   

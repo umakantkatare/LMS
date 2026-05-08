@@ -13,7 +13,11 @@ export const loginUser = (data) => {
 };
 
 export const getProfile = () => {
-  return api.get("/auth/me");
+  return api.get("/auth/me", {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
 };
 
 export const logoutUser = (data) => {

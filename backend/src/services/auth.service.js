@@ -3,9 +3,9 @@
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 
+import cookieOptions from "../configs/cookie.config.js";
 import ErrorHandler from "../utils/errorHandler.util.js";
 import sendEmail from "../utils/sendEmail.util.js";
-import sendToken from "../utils/sendToken.util.js";
 
 import {
   generateAccessToken,
@@ -24,19 +24,22 @@ import {
   saveResetTokenRepo,
   clearResetTokenRepo,
 } from "../repositories/auth.repository.js";
+
 import logger from "../utils/logger.util.js";
 import { deleteFromImageKit, uploadToImageKit } from "../utils/avatar.util.js";
+import { saveUser } from "../repositories/user.repository.js";
+
+const hashToken = (token) => {
+  return crypto.createHash("sha256").update(token).digest("hex");
+};
 
 /**
  * Register Service
  */
-
 export const registerService = async (body, file) => {
-  console.warn("body", body);
   const { name, email, password } = body;
 
   const existingUser = await findUserByEmailRepo(email);
-
   if (existingUser) {
     throw new ErrorHandler("User already exists", 409);
   }
@@ -46,15 +49,10 @@ export const registerService = async (body, file) => {
   let uploadedFile = null;
 
   try {
-    let avatar = {
-      public_id: "",
-      secure_url: "",
-    };
+    let avatar = { public_id: "", secure_url: "" };
 
-    // Upload only after validations passed
     if (file) {
       uploadedFile = await uploadToImageKit(file, "/lms/users/avatar");
-
       avatar = {
         public_id: uploadedFile.public_id,
         secure_url: uploadedFile.secure_url,
@@ -78,11 +76,9 @@ export const registerService = async (body, file) => {
   } catch (error) {
     logger.error("Register Service Error", {
       message: error.message,
-      name,
       email,
-      hasFile: !!file,
     });
-    // rollback cloud file
+
     if (uploadedFile?.fileId) {
       await deleteFromImageKit(uploadedFile.fileId);
     }
@@ -98,48 +94,49 @@ export const loginService = async (body, res) => {
   const { email, password } = body;
 
   const user = await findUserByEmailRepo(email, true);
-
   if (!user) {
     throw new ErrorHandler("Invalid credentials", 401);
   }
 
   const isMatched = await bcrypt.compare(password, user.password);
-
   if (!isMatched) {
     throw new ErrorHandler("Invalid credentials", 401);
   }
 
-  const accessToken = generateAccessToken(user._id);
+  user.lastLoginAt = new Date();
+  await saveUser(user);
 
+  const accessToken = generateAccessToken(user._id);
   const refreshToken = generateRefreshToken(user._id);
 
-  await saveRefreshTokenRepo(user._id, refreshToken);
-
-  sendToken(res, accessToken, refreshToken);
+  const hashedRefreshToken = await hashToken(refreshToken);
+  await saveRefreshTokenRepo(user._id, hashedRefreshToken);
 
   return {
-    _id: user._id,
-    name: user.name,
-    email: user.email,
-    role: user.role,
+    accessToken,
+    refreshToken,
+    user: {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    },
   };
 };
 
 /**
  * Logout Service
  */
-export const logoutService = async (user, res) => {
-  await removeRefreshTokenRepo(user._id);
+export const logoutService = async (refreshToken) => {
+  if (!refreshToken) return;
 
-  res.cookie("accessToken", "", {
-    httpOnly: true,
-    expires: new Date(0),
-  });
+  try {
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
 
-  res.cookie("refreshToken", "", {
-    httpOnly: true,
-    expires: new Date(0),
-  });
+    await removeRefreshTokenRepo(decoded.id, refreshToken);
+  } catch {
+    return;
+  }
 };
 
 /**
@@ -160,15 +157,14 @@ export const getMeService = async (userId) => {
  */
 export const changePasswordService = async (userId, body) => {
   const { oldPassword, newPassword } = body;
-
+console.log('userId:', userId);
+console.log('body:', body);
   const user = await findUserByIdRepo(userId, true);
-
   if (!user) {
     throw new ErrorHandler("User not found", 404);
   }
 
   const isMatched = await bcrypt.compare(oldPassword, user.password);
-
   if (!isMatched) {
     throw new ErrorHandler("Old password incorrect", 400);
   }
@@ -181,33 +177,47 @@ export const changePasswordService = async (userId, body) => {
 };
 
 /**
- * Refresh Token
+ * Refresh Token Service (with rotation)
  */
-export const refreshTokenService = async (req, res) => {
-  const token = req.cookies?.refreshToken || req.body?.refreshToken;
-
-  if (!token) {
+export const refreshTokenService = async (refreshToken) => {
+  if (!refreshToken) {
     throw new ErrorHandler("Refresh token missing", 401);
   }
 
-  const decoded = verifyRefreshToken(token);
+  let decoded;
 
-  const user = await findUserByIdRepo(decoded.id);
-
-  if (!user || user.refreshToken !== token) {
-    throw new ErrorHandler("Invalid refresh token", 401);
+  try {
+    decoded = verifyRefreshToken(refreshToken);
+  } catch (error) {
+    throw new ErrorHandler("Invalid or expired refresh token", 401);
   }
+
+  const hashedRefreshToken = hashToken(refreshToken);
+  const user = await findUserByIdRepo(decoded.id, false, true);
+
+  if (!user) {
+    throw new ErrorHandler("User not found", 404);
+  }
+
+  const tokenExists = user.refreshToken.includes(hashedRefreshToken);
+
+  if (!tokenExists) {
+    throw new ErrorHandler("Refresh token mismatch", 401);
+  }
+
+  const newRefreshToken = generateRefreshToken(user._id);
 
   const accessToken = generateAccessToken(user._id);
 
-  res.cookie("accessToken", accessToken, {
-    httpOnly: true,
-    secure: false,
-    sameSite: "strict",
-  });
+  const hashedNewRefreshToken = hashToken(newRefreshToken);
+
+  await removeRefreshTokenRepo(user._id, hashedRefreshToken);
+
+  await saveRefreshTokenRepo(user._id, hashedNewRefreshToken);
 
   return {
     accessToken,
+    refreshToken: newRefreshToken,
   };
 };
 
@@ -216,21 +226,15 @@ export const refreshTokenService = async (req, res) => {
  */
 export const forgotPasswordService = async (email) => {
   const user = await findUserByEmailRepo(email);
-
   if (!user) {
     throw new ErrorHandler("User not found", 404);
   }
 
   const resetToken = crypto.randomBytes(32).toString("hex");
 
-  const hashedToken = crypto
-    .createHash("sha256")
-    .update(resetToken)
-    .digest("hex");
-
   const expireTime = Date.now() + 15 * 60 * 1000;
 
-  await saveResetTokenRepo(user._id, hashedToken, expireTime);
+  await saveResetTokenRepo(user._id, hashToken, expireTime);
 
   const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
 
@@ -248,7 +252,6 @@ export const resetPasswordService = async (token, password) => {
   const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 
   const user = await findUserByResetTokenRepo(hashedToken);
-
   if (!user) {
     throw new ErrorHandler("Token expired or invalid", 400);
   }

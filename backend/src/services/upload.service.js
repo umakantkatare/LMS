@@ -1,16 +1,14 @@
-// services/upload.service.js
-
 import crypto from "crypto";
 import streamifier from "streamifier";
-import cloudinary from "../config/cloudinary.js";
-import AppError from "../utils/appError.js";
+import ApiError from "../utils/error.util.js";
+import cloudinary from "../configs/cloudnary.config.js";
 
 /**
  * Upload Image
  */
 export const uploadImageService = async (file, folder = "lms/images") => {
   if (!file) {
-    throw new AppError("Image file is required", 400);
+    throw new ApiError("Image file is required", 400);
   }
 
   return await new Promise((resolve, reject) => {
@@ -21,7 +19,7 @@ export const uploadImageService = async (file, folder = "lms/images") => {
       },
       (error, result) => {
         if (error) {
-          return reject(new AppError("Image upload failed", 500));
+          return reject(new ApiError("Image upload failed", 500));
         }
 
         resolve({
@@ -41,7 +39,7 @@ export const uploadImageService = async (file, folder = "lms/images") => {
  * Sign Video Upload
  * Frontend uploads directly
  */
-export const signVideoUploadService = async (folder = "lms/videos") => {
+export const signVideoUploadService = async (folder = "lms/course/videos") => {
   const timestamp = Math.round(Date.now() / 1000);
 
   const paramsToSign = `folder=${folder}&timestamp=${timestamp}${process.env.CLOUDINARY_API_SECRET}`;
@@ -65,7 +63,7 @@ export const signVideoUploadService = async (folder = "lms/videos") => {
  */
 export const deleteFileService = async (publicId) => {
   if (!publicId) {
-    throw new AppError("publicId required", 400);
+    throw new ApiError("publicId required", 400);
   }
 
   const result = await cloudinary.uploader.destroy(publicId, {

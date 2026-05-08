@@ -15,7 +15,7 @@ import {
  * POST /api/v1/course/:id/section
  */
 export const createSection = asyncHandler(async (req, res) => {
-  const section = await createSectionService(req.params.id, req.body, req.user);
+  const section = await createSectionService(req.params.courseId, req.body, req.user);
 
   res.status(201).json({
     success: true,

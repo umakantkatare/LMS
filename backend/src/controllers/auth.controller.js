@@ -1,6 +1,7 @@
 // src/controllers/auth.controller.js
 
 // import asyncHandler from "express-async-handler";
+import cookieOptions from "../configs/cookie.config.js";
 import asyncHandler from "../middlewares/asyncHandler.middleware.js";
 import {
   registerService,
@@ -36,12 +37,18 @@ export const register = asyncHandler(async (req, res, next) => {
  * @route POST /api/v1/auth/login
  */
 export const login = asyncHandler(async (req, res) => {
-  const data = await loginService(req.body, res);
+  const data = await loginService(req.body);
+
+  res.cookie("refreshToken", data.refreshToken, {
+    ...cookieOptions,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
 
   return res.status(200).json({
     success: true,
     message: "Login successful",
-    data,
+    accessToken: data.accessToken,
+    user: data.user,
   });
 });
 
@@ -50,7 +57,11 @@ export const login = asyncHandler(async (req, res) => {
  * @route POST /api/v1/auth/logout
  */
 export const logout = asyncHandler(async (req, res) => {
-  await logoutService(req.user, res);
+  const refreshToken = req.cookies?.refreshToken;
+
+  await logoutService(refreshToken);
+
+  res.clearCookie("refreshToken", cookieOptions);
 
   return res.status(200).json({
     success: true,
@@ -77,6 +88,7 @@ export const me = asyncHandler(async (req, res) => {
  */
 export const changePassword = asyncHandler(async (req, res, next) => {
   try {
+    console.log('user change pswrd',req.user);
     await changePasswordService(req.user._id, req.body);
 
     return res.status(200).json({
@@ -93,12 +105,19 @@ export const changePassword = asyncHandler(async (req, res, next) => {
  * @route POST /api/v1/auth/refresh-token
  */
 export const refreshToken = asyncHandler(async (req, res) => {
-  const data = await refreshTokenService(req, res);
+  const refreshToken = req.cookies?.refreshToken;
+
+  const data = await refreshTokenService(refreshToken);
+
+  res.cookie("refreshToken", data.refreshToken, {
+    ...cookieOptions,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
 
   return res.status(200).json({
     success: true,
     message: "Token refreshed successfully",
-    data,
+    accessToken: data.accessToken,
   });
 });
 

@@ -95,6 +95,10 @@ export const removeRefreshTokenRepo = async (userId) => {
   );
 };
 
+export const saveUser = (userModel) => {
+  return userModel.save();
+};
+
 // import userModel from "../models/nosql/userModel.model.js";
 
 // const createUser = (data) => {

@@ -14,10 +14,11 @@ import enrollmentRoutes from "./routes/enrollment.route.js";
 import contactRouter from "./routes/contact.route.js";
 import authRoutes from "./routes/auth.route.js";
 import sectionRoutes from "./routes/section.route.js";
-import lectureRoutes from './routes/lecture.route.js';
-import progressRoutes from './routes/progress.route.js';
-import reviewRoutes from './routes/review.route.js';
-import adminRoutes from './routes/admin.route.js';
+import lectureRoutes from "./routes/lecture.route.js";
+import uploadRoutes from "./routes/upload.route.js";
+import progressRoutes from "./routes/progress.route.js";
+import reviewRoutes from "./routes/review.route.js";
+import adminRoutes from "./routes/admin.route.js";
 
 const app = express();
 
@@ -56,6 +57,7 @@ app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/course", courseRoutes);
 app.use("/api/v1/section", sectionRoutes);
 app.use("/api/v1/lecture", lectureRoutes);
+app.use("/api/v1/upload", uploadRoutes);
 app.use("/api/v1/payment", paymentRoutes);
 app.use("/api/v1/order", orderRoutes);
 app.use("/api/v1/enrollment", enrollmentRoutes);
