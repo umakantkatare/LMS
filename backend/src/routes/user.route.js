@@ -2,7 +2,6 @@
 
 import express from "express";
 
-import protect from "../middlewares/protect.middleware.js";
 
 import {
   getProfile,
@@ -12,20 +11,21 @@ import {
   getDashboard,
 } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
+import { isAuthenticated } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
 /**
  * User Routes
  */
-router.get("/profile", protect, getProfile);
+router.get("/profile", isAuthenticated, getProfile);
 
-router.patch("/profile", protect, updateProfile);
+router.patch("/profile", isAuthenticated, updateProfile);
 
-router.patch("/avatar", protect, upload.single("avatar"), updateAvatar);
+router.patch("/avatar", isAuthenticated, upload.single("avatar"), updateAvatar);
 
-router.delete("/account", protect, deleteAccount);
+router.delete("/account", isAuthenticated, deleteAccount);
 
-router.get("/dashboard", protect, getDashboard);
+router.get("/dashboard", isAuthenticated, getDashboard);
 
 export default router;

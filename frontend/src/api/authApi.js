@@ -1,3 +1,5 @@
+
+
 import api from "./axios";
 
 export const registerUser = (data) => {
@@ -13,11 +15,7 @@ export const loginUser = (data) => {
 };
 
 export const getProfile = () => {
-  return api.get("/auth/me", {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
+  return api.get("/auth/me");
 };
 
 export const logoutUser = (data) => {

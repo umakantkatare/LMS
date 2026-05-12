@@ -27,9 +27,8 @@ function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={["student", "admin", "instructor"]} />
         }
-      >
-      </Route>
-        <Route path="/learn" element={<WatchCourse />} />
+      ></Route>
+      <Route path="/learn" element={<WatchCourse />} />
     </Routes>
   );
 }

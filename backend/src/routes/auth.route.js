@@ -12,10 +12,10 @@ import {
   resetPassword,
 } from "../controllers/auth.controller.js";
 
-import protect from "../middlewares/protect.middleware.js";
 import validate from "../middlewares/validate.middleware.js";
 import { loginSchema, registerSchema } from "../validations/auth.validation.js";
 import { upload } from "./../middlewares/multer.middleware.js";
+import { isAuthenticated } from "../middlewares/auth.middleware.js";
 
 router.post(
   "/register",
@@ -24,9 +24,9 @@ router.post(
   register,
 );
 router.post("/login", validate(loginSchema), login);
-router.post("/logout", protect, logout);
-router.get("/me", protect, me);
-router.patch("/change-password",protect, changePassword);
+router.post("/logout", isAuthenticated, logout);
+router.get("/me", isAuthenticated, me);
+router.patch("/change-password",isAuthenticated, changePassword);
 router.post("/refresh-token", refreshToken);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password/:token", resetPassword);

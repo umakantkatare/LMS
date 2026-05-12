@@ -131,7 +131,7 @@ export const refreshTokenThunk = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const res = await refreshToken();
-      console.log('refresh-token', res);
+      console.log("refresh-token thunk file:", res);
       return res.data;
     } catch (error) {
       return rejectWithValue(

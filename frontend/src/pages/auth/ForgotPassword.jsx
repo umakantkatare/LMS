@@ -6,28 +6,28 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useDispatch } from "react-redux";
-import { forgotPasswordThunk } from "@/features/auth/authThunk";
+// import { forgotPasswordThunk } from "@/features/auth/authThunk";
 
 export default function ForgotPassword() {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm();
+  // const dispatch = useDispatch();
+  // const navigate = useNavigate();
+  // const {
+  //   register,
+  //   handleSubmit,
+  //   formState: { errors, isSubmitting },
+  //   reset,
+  // } = useForm();
 
-  const onSubmit = async (data) => {
-    console.log("Reset Email:", data);
-    // await dispatch(forgotPasswordThunk(data))
-    const res = await dispatch(forgotPasswordThunk(data));
-    console.log("forgot pssword:", res);
-    if (res.payload.success) {
-      reset();
-      navigate("/login");
-    }
-  };
+  // const onSubmit = async (data) => {
+  //   console.log("Reset Email:", data);
+  //   // await dispatch(forgotPasswordThunk(data))
+  //   const res = await dispatch(forgotPasswordThunk(data));
+  //   console.log("forgot pssword:", res);
+  //   if (res.payload.success) {
+  //     reset();
+  //     navigate("/login");
+  //   }
+  // };
 
   return (
     <div className="min-h-screen bg-black text-white flex items-center justify-center px-4">

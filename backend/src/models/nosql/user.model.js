@@ -82,7 +82,11 @@ const userSchema = new mongoose.Schema(
       enum: ["active", "blocked", "deleted"],
       default: "active",
     },
-
+    isBlocked: {
+      type: Boolean,
+      default: false,
+    },
+    
     lastLoginAt: {
       type: Date,
       default: null,
