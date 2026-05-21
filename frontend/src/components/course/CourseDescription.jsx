@@ -27,7 +27,7 @@ export default function CourseDescription({ course }) {
         {/* Highlights */}
         <div className="grid sm:grid-cols-2 gap-4">
           <div className="rounded-xl bg-slate-50 p-4">
-            <h3 className="font-semibold">Beginner Friendly</h3>
+            <h3 className="font-semibold">{course.level} Friendly</h3>
 
             <p className="text-sm text-slate-600 mt-1">
               Start from fundamentals and progress step by step.

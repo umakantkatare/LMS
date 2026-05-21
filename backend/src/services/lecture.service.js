@@ -39,8 +39,11 @@ export const createLectureService = async (courseId, payload, user) => {
     throw new ApiError("Unauthorized access", 403);
   }
 
-  if (!payload.title || !payload.sectionId) {
-    throw new ApiError("Lecture title and sectionId are required", 400);
+  if (!payload.title) {
+    throw new ApiError("Lecture title are required", 400);
+  }
+  if (!payload.sectionId) {
+    throw new ApiError("sectionId are required", 400);
   }
 
   const section = await getSectionByIdRepo(payload.sectionId);
@@ -62,7 +65,7 @@ export const createLectureService = async (courseId, payload, user) => {
     order: totalLectures + 1,
   });
 
-  await addLectureToSectionRepo(payload.section, lecture._id);
+  await addLectureToSectionRepo(payload.sectionId, lecture._id);
 
   return lecture;
 };

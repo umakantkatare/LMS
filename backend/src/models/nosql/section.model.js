@@ -35,7 +35,7 @@ const sectionSchema = new mongoose.Schema(
     },
 
     totalDuration: {
-      type: Number, // minutes
+      type: Number, 
       default: 0,
     },
 

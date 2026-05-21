@@ -67,6 +67,7 @@ export default function RegisterPage() {
               <div>
                 <Label className="text-lg mb-2 block">Name</Label>
                 <Input
+                  autoComplete="off"
                   placeholder="Enter your Name here"
                   {...register("name")}
                   className="h-14 bg-transparent border-zinc-800 text-white"
@@ -86,6 +87,7 @@ export default function RegisterPage() {
               <Label className="text-lg mb-2 block">Password</Label>
               <Input
                 type="password"
+                autoComplete="new-password"
                 placeholder="Enter password"
                 {...register("password", {
                   required: "Password required",

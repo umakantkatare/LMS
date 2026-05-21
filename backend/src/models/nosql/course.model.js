@@ -42,6 +42,7 @@ const courseSchema = new mongoose.Schema(
 
     language: {
       type: String,
+      enum: ["English", "Hindi", "Hinglish"],
       default: "English",
     },
 
@@ -63,13 +64,19 @@ const courseSchema = new mongoose.Schema(
 
     discountPrice: {
       type: Number,
-      default: 0,
       min: 0,
+      default: 0,
+      validate: {
+        validator: function (value) {
+          return value <= this.price;
+        },
+        message: "Discount price cannot exceed original price",
+      },
     },
 
     isFree: {
       type: Boolean,
-      trim:true,
+      trim: true,
       default: false,
     },
 
@@ -82,7 +89,7 @@ const courseSchema = new mongoose.Schema(
     instructor: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      // required: true,
     },
 
     sections: [
@@ -105,12 +112,14 @@ const courseSchema = new mongoose.Schema(
     },
 
     totalDuration: {
-      type: Number, // minutes
+      type: Number,
       default: 0,
     },
 
     rating: {
       type: Number,
+      min: 0,
+      max: 5,
       default: 0,
     },
 

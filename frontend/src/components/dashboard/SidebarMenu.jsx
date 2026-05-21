@@ -1,39 +1,44 @@
-import { User, Briefcase, Users, FolderKanban, LogOut } from "lucide-react";
-
+import { LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { studentMenu } from "@/constants/studentMenu ";
+import { menuByRole } from "@/constants/studentMenu ";
 import { useDispatch } from "react-redux";
 import { logoutThunk } from "@/features/auth/authThunk";
-
-// const studentMenu = [
-//   { name: "Basic Info", icon: User, active: true },
-//   { name: "Batches", icon: Users },
-//   { name: "Projects", icon: FolderKanban },
-// ];
+import useAuth from "@/hooks/useAuth";
+import { NavLink, useLocation } from "react-router-dom";
 
 export default function SidebarMenu() {
+  const location = useLocation();
+  console.log("user location:", location.pathname);
   const dispatch = useDispatch();
   async function onLogout() {
     await dispatch(logoutThunk());
   }
+
+  const { user } = useAuth();
+
+  const userRole = user?.role;
+  const menu = menuByRole[userRole] || [];
   return (
     <>
       <nav className="space-y-2 flex-1">
-        {studentMenu.map((item, i) => {
+        {menu.map((item, i) => {
           const Icon = item.icon;
+          const isActive = location.pathname === item.path;
+          console.log("active path:", isActive);
 
           return (
-            <button
+            <NavLink
+              to={item?.path}
               key={i}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition ${
-                item.active
+                isActive
                   ? "bg-orange-600 text-white"
                   : "text-zinc-400 hover:bg-zinc-900"
               }`}
             >
               <Icon className="w-4 h-4" />
               {item.name}
-            </button>
+            </NavLink>
           );
         })}
       </nav>

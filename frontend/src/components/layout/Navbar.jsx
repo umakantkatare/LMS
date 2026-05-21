@@ -64,7 +64,7 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-4">
           {user ? (
             <Link
-              to="/student/dashboard"
+              to="/profile"
               className="w-11 h-11 rounded-full border border-white/10 bg-white/5 backdrop-blur-xl flex items-center justify-center text-white hover:bg-white/10 transition"
             >
               <User size={18} />

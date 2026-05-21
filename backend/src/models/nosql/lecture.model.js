@@ -39,7 +39,7 @@ const lectureSchema = new mongoose.Schema(
         default: "",
       },
       duration: {
-        type: Number, // minutes
+        type: Number, 
         default: 0,
       },
     },

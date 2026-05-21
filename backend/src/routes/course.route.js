@@ -35,7 +35,7 @@ router.get("/:slug", getCourseBySlug);
 router.post(
   "/create",
   isAuthenticated,
-  authorizeRoles("instructor", "ADMIN"),
+  authorizeRoles("instructor", "admin"),
   upload.single("thumbnail"),
   createCourse,
 );

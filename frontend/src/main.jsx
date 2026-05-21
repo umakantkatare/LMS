@@ -8,6 +8,7 @@ import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "./app/store.js";
 import { injectStore } from "./api/axios.js";
+import { Toaster } from "./components/ui/sonner.jsx";
 
 injectStore(store);
 createRoot(document.getElementById("root")).render(
@@ -15,6 +16,7 @@ createRoot(document.getElementById("root")).render(
     <Provider store={store}>
       <BrowserRouter>
         <App />
+        <Toaster />
       </BrowserRouter>
     </Provider>
   </StrictMode>,

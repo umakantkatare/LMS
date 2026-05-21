@@ -12,6 +12,7 @@ import {
 } from "../repositories/course.repository.js";
 import { deleteFromImageKit, uploadToImageKit } from "../utils/avatar.util.js";
 import ApiError from "../utils/error.util.js";
+import logger from "../utils/logger.util.js";
 
 /**
  * Create Course

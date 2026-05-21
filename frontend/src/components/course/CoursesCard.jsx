@@ -16,13 +16,13 @@ export default function CoursesCard({ course }) {
       <div className="relative h-52 overflow-hidden">
         <img
           src={course.thumbnail?.url}
-          alt={course.title}
+          alt={course?.title}
           className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
         />
 
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
 
-        {course.live && (
+        {course?.live && (
           <span className="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-medium bg-red-500 text-white">
             Live
           </span>
@@ -35,19 +35,19 @@ export default function CoursesCard({ course }) {
 
       {/* content */}
       <div className="p-5">
-        <p className="text-sm text-orange-400 font-medium">{course.category}</p>
+        <p className="text-sm text-orange-400 font-medium">{course?.category}</p>
 
         <h3 className="mt-2 text-xl font-semibold leading-snug line-clamp-2 min-h-[56px]">
-          {course.title}
+          {course?.title}
         </h3>
 
         {/* pricing */}
         <div className="mt-4 flex items-end gap-3">
-          <span className="text-2xl font-bold">₹{course.price}</span>
+          <span className="text-2xl font-bold">₹{course?.price}</span>
 
-          <span className="text-sm text-zinc-500 line-through">
-            ₹{course.oldPrice}
-          </span>
+          {/* <span className="text-sm text-zinc-500 line-through">
+            ₹{course?.oldPrice}
+          </span> */}
         </div>
 
         {/* button */}

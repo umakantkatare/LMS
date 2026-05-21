@@ -233,8 +233,8 @@ export const forgotPasswordService = async (email) => {
   const resetToken = crypto.randomBytes(32).toString("hex");
 
   const expireTime = Date.now() + 15 * 60 * 1000;
-
-  await saveResetTokenRepo(user._id, hashToken, expireTime);
+  const hashedResetToken = hashToken(resetToken)
+  await saveResetTokenRepo(user._id, hashedResetToken, expireTime);
 
   const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
 
@@ -250,7 +250,6 @@ export const forgotPasswordService = async (email) => {
  */
 export const resetPasswordService = async (token, password) => {
   const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
-
   const user = await findUserByResetTokenRepo(hashedToken);
   if (!user) {
     throw new ErrorHandler("Token expired or invalid", 400);
