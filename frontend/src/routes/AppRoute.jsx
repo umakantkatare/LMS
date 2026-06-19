@@ -26,8 +26,8 @@ import ProtectedRoute from "./ProtectedRoute";
 import { profileThunk } from "@/features/auth/authThunk";
 import EnrollmentCourses from "@/pages/student/EnrollmentCourses";
 import ContactPage from "@/pages/contact/ContactPage";
-import Homepage from "@/pages/Homepage";
-import ChangePassword from "@/components/dashboard/ChangePassword";
+import Homepage from "../pages/Homepage";
+import ChangePassword from "../components/dashboard/ChangePassword";
 
 function AppRoutes() {
   const dispatch = useDispatch();
