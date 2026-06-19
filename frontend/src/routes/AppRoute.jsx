@@ -1,24 +1,23 @@
 import { createBrowserRouter } from "react-router-dom";
 
-import Homepage from "../../src/pages/Homepage";
-import Login from "../../src/pages/auth/Login";
-import Register from "../../src/pages/auth/Register";
-import ForgotPassword from "../../src/pages/auth/ForgotPassword";
-import ChangePassword from "../../src/components/dashboard/ChangePassword";
-import ResetPassword from "../../src/pages/auth/ResetPassword";
-import Course from "../../src/pages/course/Course";
-import EnrollmentCourses from "../../src/pages/student/EnrollmentCourses";
-import CourseDetails from "../../src/pages/course/CourseDetails";
-import ContactPage from "../../src/pages/contact/ContactPage";
-import CreateCoursePage from "../../src/pages/course/CreateCourse";
-import WatchCourse from "../../src/pages/course/WatchCourse";
-import ManageCoursePage from "../../src/pages/course/ManageCoursePage";
-import CurriculumPage from "../../src/components/course/CurriculumList";
-import CourseCurriculum from "../../src/pages/course/CourseCurriculam";
-import MyCoursePage from "../../src/pages/instructor/MyCoursePage";
-import Profile from "../../src/pages/dashboard/Profile";
+import Homepage from "../pages/Homepage";
+import Login from "../pages/auth/Login";
+import Register from "..//pages/auth/Register";
+import ForgotPassword from "../pages/auth/ForgotPassword";
+import ChangePassword from "../components/dashboard/ChangePassword";
+import ResetPassword from "../pages/auth/ResetPassword";
+import Course from "../pages/course/Course";
+import EnrollmentCourses from "../pages/student/EnrollmentCourses";
+import CourseDetails from "../pages/course/CourseDetails";
+import ContactPage from "../pages/contact/ContactPage";
+import CreateCoursePage from "../pages/course/CreateCourse";
+import WatchCourse from "../pages/course/WatchCourse";
+import ManageCoursePage from "../pages/course/ManageCoursePage";
+import CurriculumPage from "../components/course/CurriculumList";
+import CourseCurriculum from "../pages/course/CourseCurriculam";
+import MyCoursePage from "../pages/instructor/MyCoursePage";
+import Profile from "../pages/dashboard/Profile";
 import ProtectedRoute from "./ProtectedRoute";
-
 
 export const router = createBrowserRouter([
   {
@@ -163,20 +162,20 @@ export const router = createBrowserRouter([
 // import ChangePassword from "../components/dashboard/ChangePassword";
 
 // function AppRoutes() {
-  // const dispatch = useDispatch();
-  // const { loading } = useSelector((state) => state.auth);
+// const dispatch = useDispatch();
+// const { loading } = useSelector((state) => state.auth);
 
-  // useEffect(() => {
-  //   dispatch(profileThunk());
-  // }, [dispatch]);
+// useEffect(() => {
+//   dispatch(profileThunk());
+// }, [dispatch]);
 
-  // if (loading) {
-  //   return (
-  //     <div className="flex min-h-screen items-center justify-center">
-  //       Loading...
-  //     </div>
-  //   );
-  // }
+// if (loading) {
+//   return (
+//     <div className="flex min-h-screen items-center justify-center">
+//       Loading...
+//     </div>
+//   );
+// }
 
 //   return (
 //     <Routes>
