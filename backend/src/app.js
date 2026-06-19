@@ -26,7 +26,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://lms-frontend-phi-pied.vercel.app ",
+      "https://lms-frontend-phi-pied.vercel.app",
     ],
     methods: ["GET", "POST", "DELETE", "PUT", "PATCH"],
     allowedHeaders: [
