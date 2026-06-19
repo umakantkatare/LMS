@@ -2,7 +2,7 @@ import axios from "axios";
 import { setLogout, updateToken } from "@/features/auth/authSlice";
 
 let store;
-const url = import.meta.env.VITE_BASE_URL
+const url = import.meta.env.VITE_BASE_URL || "http://localhost:4000/api/v1"
 
 export const injectStore = (_store) => {
   store = _store;
