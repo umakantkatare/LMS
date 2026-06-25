@@ -57,6 +57,14 @@ export const profileThunk = createAsyncThunk(
       );
     }
   },
+  {
+    condition: (_, { getState }) => {
+      const { auth } = getState();
+      if (auth.user) {
+        return false;
+      }
+    },
+  },
 );
 
 // Logout
@@ -131,12 +139,19 @@ export const refreshTokenThunk = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const res = await refreshToken();
-      console.log("refresh-token thunk file:", res);
       return res.data;
     } catch (error) {
       return rejectWithValue(
         error?.response?.data?.message || error?.message || "Session expired",
       );
     }
+  },
+  {
+    condition: (_, { getState }) => {
+      const { auth } = getState();
+      if (auth.accessToken || auth.user) {
+        return false;
+      }
+    },
   },
 );

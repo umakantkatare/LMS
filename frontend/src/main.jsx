@@ -11,10 +11,10 @@ import { Toaster } from "./components/ui/sonner.jsx";
 
 injectStore(store);
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
+  // <StrictMode>
     <Provider store={store}>
         <App />
         <Toaster />
     </Provider>
-  </StrictMode>,
+  // </StrictMode>,
 );

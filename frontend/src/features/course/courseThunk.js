@@ -58,7 +58,7 @@ export const getPublishedCoursesThunk = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const res = await getPublishedCourses();
-      console.log('published course:', res);
+      console.log("published course:", res);
       return res.data;
     } catch (error) {
       return rejectWithValue(
@@ -67,6 +67,19 @@ export const getPublishedCoursesThunk = createAsyncThunk(
           "Fetch published courses failed",
       );
     }
+  },
+  {
+    condition: (_, { getState }) => {
+      const { course } = getState();
+
+      if (course?.publishedCourses && course.publishedCourses.length > 0) {
+        return false;
+      }
+
+      if (course?.publishedLoading) {
+        return false;
+      }
+    },
   },
 );
 

@@ -1,60 +1,80 @@
+import { lazy, Suspense } from "react";
 import { createBrowserRouter } from "react-router-dom";
 
-import Homepage from "../pages/HomePage";
-import Login from "../pages/auth/Login";
-import Register from "..//pages/auth/Register";
-import ForgotPassword from "../pages/auth/ForgotPassword";
-import ChangePassword from "../components/dashboard/ChangePassword";
-import ResetPassword from "../pages/auth/ResetPassword";
-import Course from "../pages/course/Course";
-import EnrollmentCourses from "../pages/student/EnrollmentCourses";
-import CourseDetails from "../pages/course/CourseDetails";
-import ContactPage from "../pages/contact/ContactPage";
-import CreateCoursePage from "../pages/course/CreateCourse";
-import WatchCourse from "../pages/course/WatchCourse";
-import ManageCoursePage from "../pages/course/ManageCoursePage";
-import CurriculumPage from "../components/course/CurriculumList";
-import CourseCurriculum from "../pages/course/CourseCurriculam";
-import MyCoursePage from "../pages/instructor/MyCoursePage";
-import Profile from "../pages/dashboard/Profile";
 import ProtectedRoute from "./ProtectedRoute";
+
+const Homepage = lazy(() => import("../pages/HomePage"));
+const Login = lazy(() => import("../pages/auth/Login"));
+const Register = lazy(() => import("../pages/auth/Register"));
+const ForgotPassword = lazy(() => import("../pages/auth/ForgotPassword"));
+const ChangePassword = lazy(
+  () => import("../components/dashboard/ChangePassword"),
+);
+const ResetPassword = lazy(() => import("../pages/auth/ResetPassword"));
+const Course = lazy(() => import("../pages/course/Course"));
+const EnrollmentCourses = lazy(
+  () => import("../pages/student/EnrollmentCourses"),
+);
+const CourseDetails = lazy(() => import("../pages/course/CourseDetails"));
+const ContactPage = lazy(() => import("../pages/contact/ContactPage"));
+const CreateCoursePage = lazy(() => import("../pages/course/CreateCourse"));
+const WatchCourse = lazy(() => import("../pages/course/WatchCourse"));
+const ManageCoursePage = lazy(() => import("../pages/course/ManageCoursePage"));
+const CurriculumPage = lazy(
+  () => import("../components/course/CurriculumList"),
+);
+const CourseCurriculum = lazy(() => import("../pages/course/CourseCurriculam"));
+const MyCoursePage = lazy(() => import("../pages/instructor/MyCoursePage"));
+const Profile = lazy(() => import("../pages/dashboard/Profile"));
+
+const withSuspense = (Component) => (
+  <Suspense
+    fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
+      </div>
+    }
+  >
+    <Component />
+  </Suspense>
+);
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <Homepage />,
+    element: withSuspense(Homepage),
   },
   {
     path: "/login",
-    element: <Login />,
+    element: withSuspense(Login),
   },
   {
     path: "/register",
-    element: <Register />,
+    element: withSuspense(Register),
   },
   {
     path: "/forgot-password",
-    element: <ForgotPassword />,
+    element: withSuspense(ForgotPassword),
   },
   {
     path: "/change-password",
-    element: <ChangePassword />,
+    element: withSuspense(ChangePassword),
   },
   {
     path: "/reset-password/:token",
-    element: <ResetPassword />,
+    element: withSuspense(ResetPassword),
   },
   {
     path: "/courses",
-    element: <Course />,
+    element: withSuspense(Course),
   },
   {
     path: "/course/:slug",
-    element: <CourseDetails />,
+    element: withSuspense(CourseDetails),
   },
   {
     path: "/contact",
-    element: <ContactPage />,
+    element: withSuspense(ContactPage),
   },
 
   // Student + Instructor + Admin Routes
@@ -65,15 +85,15 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "/enroll-courses",
-        element: <EnrollmentCourses />,
+        element: withSuspense(EnrollmentCourses),
       },
       {
         path: "/watch/:id",
-        element: <WatchCourse />,
+        element: withSuspense(WatchCourse),
       },
       {
         path: "/profile",
-        element: <Profile />,
+        element: withSuspense(Profile),
       },
     ],
   },
@@ -84,31 +104,31 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "/create-course/basics",
-        element: <CreateCoursePage />,
+        element: withSuspense(CreateCoursePage),
       },
       {
         path: "/managecourse/:courseId",
-        element: <ManageCoursePage />,
+        element: withSuspense(ManageCoursePage),
       },
       {
         path: "/instructor/managecourse/:courseId",
-        element: <ManageCoursePage />,
+        element: withSuspense(ManageCoursePage),
       },
       {
         path: "/instructor/my-courses",
-        element: <MyCoursePage />,
+        element: withSuspense(MyCoursePage),
       },
       {
         path: "/create-course/curriculum",
-        element: <CourseCurriculum />,
+        element: withSuspense(CourseCurriculum),
       },
       {
         path: "/create-course/sections/:courseId",
-        element: <div>Create Section Page</div>,
+        element: <div>Create Section Page</div>, // Static element (No lazy loading needed)
       },
       {
         path: "/create-course/lectures/:courseId",
-        element: <div>Add Lecture Page</div>,
+        element: <div>Add Lecture Page</div>, // Static element
       },
     ],
   },
@@ -116,7 +136,7 @@ export const router = createBrowserRouter([
   // Common Route
   {
     path: "/course/curriculum",
-    element: <CurriculumPage />,
+    element: withSuspense(CurriculumPage),
   },
 
   // Unauthorized Route
@@ -129,98 +149,3 @@ export const router = createBrowserRouter([
     ),
   },
 ]);
-
-// import { Routes, Route } from "react-router-dom";
-// import { useEffect } from "react";
-// import { useDispatch, useSelector } from "react-redux";
-
-// import Login from "@/pages/auth/Login";
-// import Register from "@/pages/auth/Register";
-// import ForgotPassword from "@/pages/auth/ForgotPassword";
-// import ResetPassword from "@/pages/auth/ResetPassword";
-
-// import Course from "@/pages/course/Course";
-// import CourseDetails from "@/pages/course/CourseDetails";
-// import WatchCourse from "@/pages/course/WatchCourse";
-// import CreateCoursePage from "@/pages/course/CreateCourse";
-// import CourseCurriculum from "@/pages/course/CourseCurriculam";
-// import ManageCoursePage from "@/pages/course/ManageCoursePage";
-// import CurriculumPage from "@/components/course/CurriculumList";
-
-// // Dashboard
-// import Profile from "@/pages/dashboard/Profile";
-
-// // Instructor
-// import MyCoursePage from "@/pages/instructor/MyCoursePage";
-
-// // Auth
-// import ProtectedRoute from "./ProtectedRoute";
-// import { profileThunk } from "@/features/auth/authThunk";
-// import EnrollmentCourses from "@/pages/student/EnrollmentCourses";
-// import ContactPage from "@/pages/contact/ContactPage";
-// import Homepage from "../pages/Homepage";
-// import ChangePassword from "../components/dashboard/ChangePassword";
-
-// function AppRoutes() {
-// const dispatch = useDispatch();
-// const { loading } = useSelector((state) => state.auth);
-
-// useEffect(() => {
-//   dispatch(profileThunk());
-// }, [dispatch]);
-
-// if (loading) {
-//   return (
-//     <div className="flex min-h-screen items-center justify-center">
-//       Loading...
-//     </div>
-//   );
-// }
-
-//   return (
-//     <Routes>
-//       <Route path="/" element={<Homepage />} />
-//       <Route path="/login" element={<Login />} />
-//       <Route path="/register" element={<Register />} />
-//       <Route path="/forgot-password" element={<ForgotPassword />} />
-//       <Route path="/change-password" element={<ChangePassword />} />
-//       <Route path="/reset-password/:token" element={<ResetPassword />} />
-//       <Route path="/courses" element={<Course />} />
-//       <Route path="/enroll-courses" element={<EnrollmentCourses />} />
-//       <Route path="/course/:slug" element={<CourseDetails />} />
-//       <Route path="/contact" element={<ContactPage />} />
-//       <Route
-//         element={
-//           <ProtectedRoute allowedRoles={["student", "instructor", "admin"]} />
-//         }
-//       >
-//         {/* <Route path="/profile" element={<StudentDashboard />} /> */}
-//       </Route>
-//       <Route
-//         element={<ProtectedRoute allowedRoles={["admin", "instructor"]} />}
-//       >
-//         <Route path="/create-course/basics" element={<CreateCoursePage />} />
-//       </Route>
-//       <Route path="/watch/:id" element={<WatchCourse />} />
-//       <Route path="/managecourse/:courseId" element={<ManageCoursePage />} />
-//       <Route
-//         path="/create-course/sections/:courseId"
-//         // element={<CreateSectionPage />}
-//       />
-//       <Route
-//         path="/create-course/lectures/:courseId"
-//         // element={<AddLecturePage />}
-//       />
-//       <Route path="/course/curriculum" element={<CurriculumPage />} />
-//       <Route path="/create-course/curriculum" element={<CourseCurriculum />} />
-//       <Route path="/instructor/my-courses" element={<MyCoursePage />} />
-//       <Route
-//         path="/instructor/managecourse/:courseId"
-//         element={<ManageCoursePage />}
-//       />
-//       <Route path="/profile" element={<Profile />} />
-//     </Routes>
-//   );
-// }
-
-// export default AppRoutes;
