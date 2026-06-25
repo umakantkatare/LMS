@@ -1,6 +1,5 @@
 // src/controllers/auth.controller.js
 
-// import asyncHandler from "express-async-handler";
 import cookieOptions from "../configs/cookie.config.js";
 import asyncHandler from "../middlewares/asyncHandler.middleware.js";
 import {
