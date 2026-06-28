@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { useDispatch } from "react-redux";
 import { registerThunk } from "@/features/auth/authThunk";
 import { Label } from "@/components/ui/label";
-// import { Checkbox } from "@/components/ui/checkbox";
 
 export default function RegisterPage() {
   const dispatch = useDispatch();
@@ -103,17 +102,6 @@ export default function RegisterPage() {
             >
               Register Now
             </Button>
-
-            {/* Checkbox */}
-            {/* <div className="flex gap-3 items-start text-sm text-zinc-400">
-              <Checkbox />
-              <p>
-                I agree to the{" "}
-                <span className="text-orange-500">Terms & Conditions</span>,{" "}
-                <span className="text-orange-500">Privacy Policy</span> and
-                anti-piracy policy.
-              </p>
-            </div> */}
 
             {/* Divider */}
             <div className="flex items-center gap-4">

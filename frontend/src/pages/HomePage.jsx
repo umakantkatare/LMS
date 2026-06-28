@@ -1,25 +1,41 @@
-import BrandsSection from "@/components/HomePage/BrandsSection";
-import CoursesSection from "@/components/HomePage/CoursesSection";
-import CTASection from "@/components/HomePage/CTASection";
-import FAQSection from "@/components/HomePage/FAQSection";
-import HeroSection from "@/components/HomePage/HeroSection";
-import StatsSection from "@/components/HomePage/StatsSection";
-import TestimonialsSection from "@/components/HomePage/TestimonialsSection";
-import WhyChooseSection from "@/components/HomePage/WhyChooseSection";
+import React, { Suspense, lazy } from "react";
 import MainLayout from "@/layouts/MainLayout";
-import React from "react";
+import HeroSection from "@/components/HomePage/HeroSection";
+
+const StatsSection = lazy(() => import("@/components/HomePage/StatsSection"));
+const BrandsSection = lazy(() => import("@/components/HomePage/BrandsSection"));
+const WhyChooseSection = lazy(
+  () => import("@/components/HomePage/WhyChooseSection"),
+);
+const CoursesSection = lazy(
+  () => import("@/components/HomePage/CoursesSection"),
+);
+const TestimonialsSection = lazy(
+  () => import("@/components/HomePage/TestimonialsSection"),
+);
+const FAQSection = lazy(() => import("@/components/HomePage/FAQSection"));
+const CTASection = lazy(() => import("@/components/HomePage/CTASection"));
+
+const SectionLoader = () => (
+  <div className="flex items-center justify-center py-20">
+    <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+  </div>
+);
 
 const Homepage = () => {
   return (
     <MainLayout>
       <HeroSection />
-      <StatsSection />
-      <BrandsSection />
-      <WhyChooseSection />
-      <CoursesSection />
-      <TestimonialsSection />
-      <FAQSection />
-      <CTASection />
+
+      <Suspense fallback={<SectionLoader />}>
+        <StatsSection />
+        <BrandsSection />
+        <WhyChooseSection />
+        <CoursesSection />
+        <TestimonialsSection />
+        <FAQSection />
+        <CTASection />
+      </Suspense>
     </MainLayout>
   );
 };

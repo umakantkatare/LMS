@@ -28,8 +28,7 @@ export default function ResetPassword() {
     try {
       console.log("Reset Password:", { token, ...data });
 
-      // Example API call
-      // await axios.post(`/api/auth/reset-password/${token}`, data);
+      await axios.post(`/api/auth/reset-password/${token}`, data);
 
       reset();
       navigate("/login");
