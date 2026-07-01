@@ -26,21 +26,14 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Navbar */}
-      <header className="w-full flex justify-between items-center px-10 py-6">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          Sheriyans <span className="font-light">Coding School</span>
-        </h1>
-
-        <nav className="hidden md:flex border border-zinc-800 rounded-xl px-6 py-3 gap-8 text-sm text-zinc-300">
-          <Link to="/">Home</Link>
-          <Link to="/">Courses</Link>
-          <Link to="/">Bootcamp</Link>
-          <Link to="/">Request Callback</Link>
-        </nav>
-
-        <Link to="/login" className="text-sm text-zinc-300 hover:text-white">
-          Sign In
+      <header className="w-full flex justify-start items-center px-6 md:px-10 py-6">
+        <Link to="/" className="text-white leading-none">
+          <h1 className="text-xl md:text-3xl font-semibold tracking-tight">
+            Learning
+          </h1>
+          <p className="text-sm md:text-xl font-light text-white/90">
+            Coding School
+          </p>
         </Link>
       </header>
 
@@ -113,8 +106,7 @@ export default function RegisterPage() {
             {/* Google */}
             <Button
               type="button"
-              variant="outline"
-              className="w-full h-14 border-zinc-800 bg-zinc-950 hover:bg-zinc-900"
+              className="w-full h-14 border-zinc-800 bg-zinc-950 hover:bg-zinc-900 hover:text-shadow-white scale-95"
             >
               Continue with Google
             </Button>

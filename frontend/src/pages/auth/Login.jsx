@@ -46,10 +46,14 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-black text-white selection:bg-orange-500/30">
       <header className="w-full flex justify-start items-center px-6 md:px-10 py-6">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          Learning{" "}
-          <span className="font-light text-zinc-400">Coding School</span>
-        </h1>
+       <Link to="/" className="text-white leading-none">
+          <h1 className="text-xl md:text-3xl font-semibold tracking-tight">
+            Learning
+          </h1>
+          <p className="text-sm md:text-xl font-light text-white/90">
+            Coding School
+          </p>
+        </Link>
       </header>
 
       <main className="flex justify-center items-center px-4 py-10">
@@ -161,7 +165,6 @@ export default function LoginPage() {
 
             <Button
               type="button"
-              variant="outline"
               className="w-full h-14 border-zinc-800 bg-transparent hover:bg-zinc-900"
             >
               <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
